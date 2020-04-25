@@ -4,7 +4,7 @@
 
 Scripts, Programs, Utility Functions, other stuff that really doesn't fit anywhere else:<br/>
 Python scripts that communicate or test Circuit Notes<br/>
-Scripts that talk to eval boards or Pmods through IIO/ Pyadi-iio
-LTspice signal processing / mixed signal examples
+Scripts that talk to eval boards or Pmods through IIO/ Pyadi-iio<br/>
+LTspice signal processing / mixed signal examples<br/>
 Educational / Training<br/>
 GnuRadio projects<br/>

@@ -2,7 +2,7 @@
 
 # ---------------------------------------------------------------------------
 # Copyright (c) 2015-2019 Analog Devices, Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 # - Redistributions of source code must retain the above copyright notice,
@@ -23,7 +23,7 @@
 #   or more patent holders. This license does not release you from the
 #   requirement that you obtain separate licenses from these patent holders
 #   to use this software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY ANALOG DEVICES, INC. AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 # NON-INFRINGEMENT, TITLE, MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -36,7 +36,7 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# 
+#
 # 2019-01-10-7CBSD SLA
 # -----------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ def hp34401a_read_voltage(hp_meter):
        returns the voltage in float
        hp_meter: the instance of the meter
     """
-    hp_meter.write("MEAS:VOLT:DC? DEF,DEF")    
+    hp_meter.write("MEAS:VOLT:DC? DEF,DEF")
     return float(hp_meter.read())
 
 def hp34401a_read_voltage_rng_res(hp_meter , v_range, v_resolution):
@@ -76,26 +76,26 @@ def hp3458a_lcd_disp(hp_meter, message):
     """
     hp_meter.write("DISP 3")
     hp_meter.write("DISP 2 '" + str(message) + "'")
-    
+
 def hp3458a_self_test(hp_meter):
     """Starts a self test
        hp_meter: the instance of the meter
     """
     hp_meter.write("TEST")
-    
+
 def hp3458a_init(hp_meter):
     """Initializes the meter to DC voltage measurment in the 10V range
        hp_meter: the instance of the meter
     """
     hp_meter.write("RESET")
     hp_meter.write("TARM HOLD")
-    hp_meter.write("FUNC DCV") # Set to DC voltage measurment 
+    hp_meter.write("FUNC DCV") # Set to DC voltage measurment
     hp_meter.write("RANGE 10") # Set to 10V range
     hp_meter.write("LFREQ LINE") # Measure line freq and set rejection filter
     hp_meter.write("NPLC 1")
     hp_meter.write("AZERO ONCE")
-    hp_meter.write("FIXEDZ ON") # Fixed input impedance 
-    
+    hp_meter.write("FIXEDZ ON") # Fixed input impedance
+
 def hp3458a_read_voltage(hp_meter):
     """Measures voltage
        returns the voltage in float
@@ -109,25 +109,25 @@ def resource_manager():
        returns the visa avalable resources
     """
     return visa.ResourceManager()
-    
+
 if __name__ == "__main__":
     # Connect to test equipment
     # ---------------------------------------------------------------------
-    
+
     # Connect to visa resource manager
     rm = resource_manager()
-    
+
     try:
         # Connect to the HP multimeter
-        hp3458a = rm.open_resource("GPIB0::22::INSTR", 
-                                   read_termination = "\r\n", 
+        hp3458a = rm.open_resource("GPIB0::22::INSTR",
+                                   read_termination = "\r\n",
                                    timeout = 50000)
-        print hp3458a
+        print(hp3458a)
         hp3458a_init(hp3458a)
         hp3458a_lcd_disp(hp3458a, "WooHoo!")
         v = hp3458a_read_voltage(hp3458a)
-        print v
-        
-        
+        print(v)
+
+
     finally:
         hp3458a.close()

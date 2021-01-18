@@ -1,0 +1,2 @@
+#!/bin/bash
+mv /lib/python3.7/site-packages/iio.py /lib/python3.7/site-packages/iio_save.py

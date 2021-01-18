@@ -57,7 +57,7 @@ from matplotlib import pyplot as plt
 '''############################'''
 bits = 16 # ADC resolution (Theoretical!!)
 num_bins = 4096 #This is also the number of points in the time record
-bin_number = 50.0 #Bin number of the signal itself. If bin_number is greater
+bin_number = 50.5001 #Bin number of the signal itself. If bin_number is greater
                 #than num_bins/2, then the signal will be aliased accordingly.
                 # Also, this simulation does not handle non-integer (noncoherent)
                 # bin numbers. (Application of windows is a big topic in and of itself.)
@@ -76,7 +76,7 @@ phase_noise_amplitude = 0.0 #.000001 #Amplitude, in fraction of a sample period
 # phase difference will be exactly equal to this. Set up as random for now,
 # could be set to a constant while other imperfections are wiggled around.
 
-phase_diff = np.random.rand() * 2. * np.pi # A random phase difference
+actual_phase_diff = np.random.rand() * 2. * np.pi # A random phase difference
 
 '''##############################'''
 '''END set up simulation parameters'''
@@ -91,19 +91,16 @@ signal_level = 2.0**bits # Calculated amplitude in LSB.
 
 #Generate some input sig1, along with noise
 for t in range(num_bins):
-    phase_jitter = phase_noise_amplitude * np.cos(2.0 * np.pi * phase_noise_offset* t / num_bins)
-    samp_jitter = np.random.normal(0.0, jitter)
-    sig1[t] = signal_level * np.cos(2.0*np.pi*bin_number*(t + samp_jitter + phase_jitter)/num_bins)/2.0 #First the pure signal :)
+    sig1[t] = signal_level * np.cos(2.0*np.pi*bin_number*(t)/num_bins)/2.0 #First the pure signal :)
     sig1[t] += np.random.normal(0.0, thermal_noise) #Then the thermal noise ;(
     sig1[t] = np.rint(sig1[t]) #Finally, round to integer value - equiavalent to quantizing
     # Second signal with random phase
-    phase_jitter = phase_noise_amplitude * np.cos(2.0 * np.pi * phase_noise_offset* t / num_bins)
-    samp_jitter = np.random.normal(0.0, jitter)
-    sig2[t] = signal_level * np.cos(phase_diff + (2.0*np.pi*bin_number*(t + samp_jitter + phase_jitter)/num_bins))/2.0
+    sig2[t] = signal_level * np.cos((2.0*np.pi*bin_number*(t)/num_bins)+actual_phase_diff)/2.0
     sig2[t] += np.random.normal(0.0, thermal_noise) #Then the thermal noise ;(
     sig2[t] = np.rint(sig2[t]) #Finally, round to integer value - equiavalent to quantizing
 
-window = np.blackman(num_bins)
+#window = np.blackman(num_bins)
+window = np.ones(num_bins)
 window = window / np.sum(window) # Normalize
 
 freq_domain_sig1 = np.fft.fft(sig1 * window)/num_bins
@@ -118,11 +115,17 @@ fund_bin = np.argmax(freq_domain_sig1[0:int((num_bins/2)-1)]) # Detect fundament
 
 phase_sig_1 = freq_domain_phase_sig1[fund_bin]
 phase_sig_2 = freq_domain_phase_sig2[fund_bin]
+phase_difference = phase_sig_2 - phase_sig_1
+error = (actual_phase_diff - phase_difference)
+if error > 1.0:
+    error -= 2.0*np.pi
 
-print ("Actual phase difference: " + str(phase_diff))
+print ("Fundamental Bin: ", fund_bin)
+print ("Actual phase difference: " + str(actual_phase_diff))
 print ("Reference signal phase: " + str(phase_sig_1))
 print ("Measurement signal phase: " + str(phase_sig_2))
-print ("Measured phase difference: " + str(phase_sig_2 - phase_sig_1))
+print ("Measured phase difference: " + str(phase_difference))
+print ("Error: ", error)
 
 
 plt.figure(1)

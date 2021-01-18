@@ -2,7 +2,7 @@
 
 # ---------------------------------------------------------------------------
 # Copyright (c) 2015-2019 Analog Devices, Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 # - Redistributions of source code must retain the above copyright notice,
@@ -23,7 +23,7 @@
 #   or more patent holders. This license does not release you from the
 #   requirement that you obtain separate licenses from these patent holders
 #   to use this software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY ANALOG DEVICES, INC. AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 # NON-INFRINGEMENT, TITLE, MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -36,7 +36,7 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# 
+#
 # 2019-01-10-7CBSD SLA
 # -----------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ Simulation of LTC2440 filters.
 This program QUALITATIVELY derive a filter of a type similar to that
 used in the LTC2400 family of ADCs.
 
-Tested with Python 2.7, Anaconda distribution available from Continuum Analytics,
+Tested with Python 3.7, Anaconda distribution available from Continuum Analytics,
 http://www.continuum.io/
 
 '''
@@ -56,14 +56,13 @@ import numpy as np
 from scipy import linspace, fft
 from scipy import signal
 from scipy.signal import lti, step
-from scipy.misc import imread
 from matplotlib import pyplot as plt
 
 plot_sinc4 = True
 
 # Choices for LTC parts: 2048 for NON-LTC2440 family, 64 to 32768 for LTC2440
 osr = 256
-sinc1=ones(osr/4) # Dividing by 4 such that the OSR is the number of taps
+sinc1=ones(int(osr/4)) # Dividing by 4 such that the OSR is the number of taps
                   # in the SINC4 filter.
 
 sinc2 = convolve(sinc1, sinc1)
@@ -106,10 +105,10 @@ if plot_sinc4 == True :
     w, h = signal.freqz(sinc4_w_rev, 1, 16385)
     hmax = max(h) #Normalize to unity
     fresp = 20.0 * np.log10(abs(h)/hmax)
-    
+
     plt.figure(2)
     plt.plot(fresp, zorder=1)
-    
+
     plt.title('sinc4 frequency domain response')
     plt.xlabel('freq.')
     plt.ylabel('log Amplitude')

@@ -2,7 +2,7 @@
 
 # ---------------------------------------------------------------------------
 # Copyright (c) 2015-2019 Analog Devices, Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 # - Redistributions of source code must retain the above copyright notice,
@@ -23,7 +23,7 @@
 #   or more patent holders. This license does not release you from the
 #   requirement that you obtain separate licenses from these patent holders
 #   to use this software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY ANALOG DEVICES, INC. AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 # NON-INFRINGEMENT, TITLE, MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -36,7 +36,7 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# 
+#
 # 2019-01-10-7CBSD SLA
 # -----------------------------------------------------------------------
 
@@ -53,18 +53,18 @@ def fold_spectrum(unfolded_spectrum, points_per_zone, num_zones):
             folded_spectrum[i] = unfolded_spectrum[points_per_zone*(i):points_per_zone*(i+1) -1:1]
             zonesign = -1
             if(verbose == 1):
-                print str(i) + " " +str(points_per_zone*(i)) + " " + str(points_per_zone*(i+1)-1)
+                print(str(i) + " " +str(points_per_zone*(i)) + " " + str(points_per_zone*(i+1)-1))
         else:
             folded_spectrum[i] = unfolded_spectrum[points_per_zone*(i+1)-1 : points_per_zone*(i) : -1]
             zonesign = 1
             if(verbose == 1):
-                print str(i) + " " +str(points_per_zone*(i+1)-1) + " " + str(points_per_zone*(i))
+                print(str(i) + " " +str(points_per_zone*(i+1)-1) + " " + str(points_per_zone*(i)))
     # Now RMS sum corresponding points from each zone
     rms_sum = [0 for i in range(points_per_zone)]
     for i in range(0, num_zones): # First, square noise densities of each zone, then add
         for j in range(0, points_per_zone-1):
             rms_sum[j] += folded_spectrum[i][j] ** 2
-    
+
     for j in range(0, points_per_zone): # Then take the square root of each element
         rms_sum[j] = rms_sum[j] ** 0.5
     return folded_spectrum, rms_sum
@@ -81,14 +81,14 @@ def integrate_psd(psd, bw):
         integrated_psd[i] += integral_of_psd_squared[i]**0.5
     integrated_psd *= bw**0.5
     return integrated_psd
-    
+
 
 def freqz_by_fft(filter_coeffs, points_per_coeff):
     num_coeffs = len(filter_coeffs)
     fftlength = num_coeffs * points_per_coeff
     resp = abs(np.fft.fft(np.concatenate((filter_coeffs, np.zeros(fftlength - num_coeffs))))) # filter and a bunch more zeros
     return resp
-    
+
 def freqz_by_fft_numpoints(filter_coeffs, numpoints):
     num_coeffs = len(filter_coeffs)
     if numpoints < num_coeffs:
@@ -108,7 +108,7 @@ def upsample_zero_stuff(data, upsample_factor):
     for i in range (0, len(data)):
         upsample_data[upsample_factor*i] = data[i]
     return upsample_data
-	
+
 def downsample(data, downsample_factor):
     # Starting with zeros makes things easy :)
     downsample_data = np.zeros(len(data) / downsample_factor)
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     plt.title("Total integ. noise from DC to x, should be sqrt(pi/2)")
     plt.semilogx(f, psd)
     plt.show()
-    
+
     sinc1resp = abs(np.fft.fft(np.concatenate(((np.ones(1024)/1024.0), np.zeros(65536-1024))))) # Make a 1024 tap filter, then find freq response
     psdsinc = integrate_psd(sinc1resp, 1.0/64.0)
 
@@ -165,14 +165,16 @@ if __name__ == "__main__":
     plt.plot(psdsinc)
     plt.axis([0, 500, 0, max(psdsinc)])
     plt.show()
-    
+
     print("And finally, here's your LTSpice noise simulation directive:")
     print(".noise V(Vout) Vin_source lin " + str(numpoints-1) + " " + str(bw_per_point) + " " + str(fmax))
 # Arguments are output node, input node, linear spacing, # of points, bin 1 frequency, end frequency)
-    
+# In LTspice, plot Vout noise spectrum. Then, right click in plot:
+#  File -> Export data as txt -> select V(onoise)
+
     ltspice_psd = np.zeros(numpoints) # bin zero(DC) already set to zero ;)
     print('reading noise PSD data from file')
-    infile = open('../../common/LTSpice/validate_integrate_psd.txt', 'r')
+    infile = open('../LTSpice/validate_integrate_psd.txt', 'r')
     print("First line (header): " + infile.readline())
     for i in range(1, numpoints-1):
         instring = infile.readline()
@@ -180,7 +182,7 @@ if __name__ == "__main__":
         ltspice_psd[i] = float(indata[1]) # Frequency Density
     infile.close()
     print('done reading!')
-    
+
     ltspice_totalnoise = integrate_psd(ltspice_psd, bw_per_point)
     print("total noise of LTSpice sim: " + str(ltspice_totalnoise[numpoints-1]))
     print("(Control-click in output plot in LTSpice and compare.)")

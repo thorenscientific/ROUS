@@ -33,10 +33,10 @@ import time
 import numpy as np
 from signal_chain_functions import *
 
-ctx=libm2k.m2kOpen()
+ctx=libm2k.m2kOpen("ip:192.168.2.1") # Explicitly call out default IP address
 if ctx is None:
-	print("Connection Error: No ADALM2000 device available/connected to your PC.")
-	exit(1)
+    print("Connection Error: No ADALM2000 device available/connected to your PC.")
+    exit(1)
 
 ctx.calibrateADC()
 ctx.calibrateDAC()
@@ -69,9 +69,12 @@ x=np.linspace(-np.pi,np.pi,n)
 buffer1 = np.sin(x)
 
 #create some "bands" of noise
-buffer2=time_points_from_freq(np.concatenate((np.ones(n//16),np.zeros(n//16), np.ones(n//16), np.zeros(n//16),
-                                              np.ones(n//16),np.zeros(n//16), np.ones(n//16), np.zeros(n//16))))*100.0
-
+bands = np.concatenate((np.ones(n//16),np.zeros(n//16),
+                        np.ones(n//16), np.zeros(n//16),
+                        np.ones(n//16),np.zeros(n//16),
+                        np.ones(n//16), np.zeros(n//16)))*1000e-6
+bands[0] = 0.0 # Set DC content to zero
+buffer2=time_points_from_freq(bands, fs=75000, density=True)
 buffer = [buffer1, buffer2]
 
 aout.setCyclic(True)
@@ -96,10 +99,10 @@ for i in range(1): # gets 10 triggered samples then quits
 #    raw_data = raw_data * my_window # Window
 #    raw_spectrum=20*np.log10(np.abs(np.fft.fft(raw_data)))
 
-
     plt.plot(spectrum)
 #    plt.plot(raw_spectrum)
     plt.show()
     time.sleep(0.1)
-time.sleep(5)
+time.sleep(1)
+x=input("press any key to continue...")
 libm2k.contextClose(ctx)

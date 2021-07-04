@@ -170,8 +170,19 @@ cn0501_aux_functions.wav_close(mym2k)
 del mycn0501
 
 plt.figure(2)
+plt.subplot(2,1,1)
+plt.tight_layout()
 plt.title("Captured data")
+plt.xlabel("Data point")
+plt.ylabel("Volts")
 plt.plot(data[0])
+plt.subplot(2,1,2)
+plt.tight_layout()
+plt.title("FFT")
+plt.xlabel("FFT bin")
+plt.ylabel("Amplitude, dBFS")
+plt.plot(20*np.log10(windowed_fft_mag(data[0])))
+plt.ylim(-140, 0)
 plt.show()
 
 

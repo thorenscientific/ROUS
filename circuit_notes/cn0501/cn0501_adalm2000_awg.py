@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Analog Devices, Inc.
+# Copyright (C) 2021 Analog Devices, Inc.
 #
 # All rights reserved.
 #
@@ -39,20 +39,15 @@ from scipy.signal import periodogram,find_peaks,ricker
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import sys
 print("Python Packages Import done")
 
 from adi.ad7768 import ad7768
 import libm2k
-from ROUS.py_utils.sin_params import *
+from sin_params import *
 print("ADI Packages Import done")
 
 import cn0501_aux_functions
-
-
-loops = 0
-ch = 0
-nsecs=0
-fname = ""
 
 cwd = os.getcwd()
 fpath = cwd + "\\csv_files\\"
@@ -91,86 +86,31 @@ class cn0501(ad7768):
         #max 512000
 
 
-    def run_sample_rate_tests(self):
-        srate = [8000,16000,32000,64000,128000,256000]
-        for sps in srate:
-
-            self.power_mode = "FAST_MODE" #FAST_MODE MEDIAN_MODE LOW_POWER_MODE
-            self.filter = "SINC5"
-            self.sample_rate = sps
-            self.rx_buffer_size = int(sps*2) #max 512000
-
-            print("Sample Rate")
-            print(self.sample_rate)
-
-            print("Buffer Size")
-            print(self.rx_buffer_size)
-
-#            print("Kernel Buffers Count")
-#            print(self.get_kernel_buffers_count)
-
-            print("Enabled Channels")
-            print (self.rx_enabled_channels)
-
-            #sec_rec = math.ceil(adc.sample_rate/adc.rx_buffer_size)*nsecs #use if 1 sec worth of record
-            sec_rec = math.ceil(self.sample_rate/self.rx_buffer_size) #use for n sec worth
 
 
-            print("\nSTART RECORD\n")
-            for nloop in range(0,loops):
-                #print(nloop)
-                vdata = np.empty( shape=(8, 0) ) # Change 8 to number of enabled channels
-                count = 0
-                dt = []
-                start = time.time()
-                for _ in range(int(sec_rec)):
-                        np.concatenate((vdata, self.rx()), axis=1)
-                        count += len(vdata[ch])
-                end = time.time()
-                rec_time = (end - start)
-
-                #print("Sample rate:   " + str(srate[0]) +"sps")
-                #print("Buffer length:   " + str(adc.rx_buffer_size) +"")
-                #print("No. of buffers:   " + str(sec_rec) +"")
-                print("Total Elapsed:   " + str(rec_time) +"s")
-                #print("adc.rx() Elapsed: " + str(np.sum(dt)) +"s")
-                #print("Average adc.rx() Elapsed: " + str(np.mean(dt)) +"s")
-                #print("others Elapsed: " + str(rec_time-np.sum(dt)) +"s")
-
-                #vdata_arr = np.asarray(vdata)
-                #vdata_arr = vdata_arr.reshape(count,1)
-                vdata_arr = vdata
-
-
-
-                DF = pd.DataFrame(vdata_arr)
-                #f = fname + "_loop" + str(nloop)+"_sps"+str(sps)+"_buffer"+str(int(adc.rx_buffer_size))+".csv"
-                f = fname + "_loop" + str(nloop)+"_sps"+str(sps)+"_5vpp"+".csv"
-
-                #File directory of exported csv files
-                DF.to_csv(fpath+f, index = False, header = False)
-
-            print("Export done")
-
-#def main():
+hardcoded_ip = 'ip:analog.local'
+print("args:\n", sys.argv)
+my_ip = sys.argv[1] if len(sys.argv) >= 2 else hardcoded_ip
+m2k_ip = sys.argv[2] if len(sys.argv) >= 3 else None
 
 test_param()
 # Instantiate hardware
-mym2k = cn0501_aux_functions.wav_init()
-mycn0501 = cn0501(uri="ip:analog.local")
+my_m2k = cn0501_aux_functions.wav_init()
+my_cn0501 = cn0501(uri=my_ip)
 
 # Pick One:
-#cn0501_aux_functions.wavdiff_out(mym2k)
-#cn0501_aux_functions.seismic_out(mym2k)
-cn0501_aux_functions.sine_1k_out(mym2k)
-#cn0501_aux_functions.wavsingle_out()
+#cn0501_aux_functions.wavdiff_out(my_m2k)
+cn0501_aux_functions.seismic_out(my_m2k)
+#cn0501_aux_functions.sine_1k_out(my_m2k)
+#cn0501_aux_functions.wavsingle_out(my_m2k)
 
 
 #mycn0501.run_sample_rate_tests()
-data = mycn0501.single_capture()
+data = my_cn0501.single_capture()
 data[0] -= np.average(data[0]) # Remove DC
-cn0501_aux_functions.wav_close(mym2k)
-del mycn0501
+cn0501_aux_functions.wav_close(my_m2k)
+del my_cn0501
+del my_m2k
 
 plt.figure(2)
 plt.subplot(2,1,1)

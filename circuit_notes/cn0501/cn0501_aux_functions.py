@@ -125,7 +125,7 @@ def wavdiff_out(ctx):
     aout.push(buffer)
     print("Wavelet Generated")
 
-def seismic_out(ctx):
+def seismic_out(m2k):
 
     st = obspy.read("https://examples.obspy.org/RJOB_061005_072159.ehz.new")
     data = st[0].data
@@ -135,7 +135,7 @@ def seismic_out(ctx):
     m2kdata = resample(shortdata, int(len(shortdata)*7500//samprate))
     m2kdata /= 1.0 * np.max(np.abs(m2kdata)) # normalize to 1V
 
-    aout=ctx.getAnalogOut()
+    aout=m2k.getAnalogOut()
     aout.setSampleRate(0, 7500)
     aout.setSampleRate(1, 7500)
     aout.enableChannel(0, True)
@@ -232,8 +232,9 @@ def sine_1k_out(ctx):
     siggen=ctx.getAnalogOut()
 
     #call buffer generator, returns sample rate and buffer
-    samp0,buffer0 = sine_buffer_generator(0,100,1,2.5,180)
-    samp1,buffer1 = sine_buffer_generator(1,100,1,2.5,0)
+    offset = 2.5
+    samp0,buffer0 = sine_buffer_generator(0,100,1,offset,180)
+    samp1,buffer1 = sine_buffer_generator(1,100,1,offset,0)
 
     siggen.enableChannel(0, True)
     siggen.enableChannel(1, True)
@@ -244,3 +245,65 @@ def sine_1k_out(ctx):
     siggen.push([buffer0,buffer1])
 
 #    input( " Press any key to stop generation ")
+
+
+def run_sample_rate_tests(cn0501):
+    srate = [8000,16000,32000,64000,128000,256000]
+    for sps in srate:
+
+        cn0501.power_mode = "FAST_MODE" #FAST_MODE MEDIAN_MODE LOW_POWER_MODE
+        cn0501.filter = "SINC5"
+        cn0501.sample_rate = sps
+        cn0501.rx_buffer_size = int(sps*2) #max 512000
+
+        print("Sample Rate")
+        print(cn0501.sample_rate)
+
+        print("Buffer Size")
+        print(cn0501.rx_buffer_size)
+
+#            print("Kernel Buffers Count")
+#            print(self.get_kernel_buffers_count)
+
+        print("Enabled Channels")
+        print (cn0501.rx_enabled_channels)
+
+        #sec_rec = math.ceil(adc.sample_rate/adc.rx_buffer_size)*nsecs #use if 1 sec worth of record
+        sec_rec = math.ceil(cn0501.sample_rate/cn0501.rx_buffer_size) #use for n sec worth
+
+
+        print("\nSTART RECORD\n")
+        for nloop in range(0,loops):
+            #print(nloop)
+            vdata = np.empty( shape=(8, 0) ) # Change 8 to number of enabled channels
+            count = 0
+            dt = []
+            start = time.time()
+            for _ in range(int(sec_rec)):
+                    np.concatenate((vdata, cn0501.rx()), axis=1)
+                    count += len(vdata[ch])
+            end = time.time()
+            rec_time = (end - start)
+
+            #print("Sample rate:   " + str(srate[0]) +"sps")
+            #print("Buffer length:   " + str(adc.rx_buffer_size) +"")
+            #print("No. of buffers:   " + str(sec_rec) +"")
+            print("Total Elapsed:   " + str(rec_time) +"s")
+            #print("adc.rx() Elapsed: " + str(np.sum(dt)) +"s")
+            #print("Average adc.rx() Elapsed: " + str(np.mean(dt)) +"s")
+            #print("others Elapsed: " + str(rec_time-np.sum(dt)) +"s")
+
+            #vdata_arr = np.asarray(vdata)
+            #vdata_arr = vdata_arr.reshape(count,1)
+            vdata_arr = vdata
+
+
+
+            DF = pd.DataFrame(vdata_arr)
+            #f = fname + "_loop" + str(nloop)+"_sps"+str(sps)+"_buffer"+str(int(adc.rx_buffer_size))+".csv"
+            f = fname + "_loop" + str(nloop)+"_sps"+str(sps)+"_5vpp"+".csv"
+
+            #File directory of exported csv files
+            DF.to_csv(fpath+f, index = False, header = False)
+
+        print("Export done")

@@ -32,6 +32,8 @@ git clone https://github.com/mthoren-adi/gnuradio_projects.git
 
 cd /home/analog/
 
-echo Grabbing config.txt and cmdline.txt... edit as needed.
-wget https://github.com/mthoren-adi/devicetree_overlays/raw/main/config.txt
-wget https://github.com/mthoren-adi/devicetree_overlays/raw/main/cmdline.txt
+echo "installed USB gadget, don't forget to add dtoverlay=dwc2 to config.txt and modules-load=dwc2 to cmdline.txt"
+
+echo "Grabbing edited config.txt with commented out overlays, edit as needed..."
+wget https://raw.githubusercontent.com/mthoren-adi/devicetree_overlays/main/config.txt
+

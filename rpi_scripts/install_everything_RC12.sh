@@ -34,6 +34,13 @@ cd /home/analog/
 
 echo "installed USB gadget, don't forget to add dtoverlay=dwc2 to config.txt and modules-load=dwc2 to cmdline.txt"
 
-echo "Grabbing edited config.txt with commented out overlays, edit as needed..."
-wget https://raw.githubusercontent.com/mthoren-adi/devicetree_overlays/main/config.txt
+echo "Grabbing edited config_act_2022.txt, renaming, copying to /boot/"
+wget https://raw.githubusercontent.com/mthoren-adi/devicetree_overlays/main/config_act_2022.txt?raw=true
+mv config_act_2022.txt config.txt
+sudo mv /boot/config.txt /boot/config_orig.txt
+sudo cp config.txt /boot/
+
+echo "Grabbing lm75 overlay and copying to root..."
+wget https://github.com/mthoren-adi/devicetree_overlays/blob/main/rpi-lm75.dtbo?raw=true
+sudo cp rpi-lm75.dtbo /boot/overlays
 

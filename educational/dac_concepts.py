@@ -59,8 +59,8 @@ import numpy as np #All functions available as np.xxx
 from matplotlib import pyplot as plt
 
 #Okay, now on to the DAC spectrum!
-num_points = 32 #This is the number of points in the time record
-bin_number = 10  # How many cycles of sinewave over the time record.
+num_points = 128 #This is the number of points in the time record
+bin_number = 63  # How many cycles of sinewave over the time record.
                 # num_points/(bin_number * 2) is the "oversample ratio"
 
 

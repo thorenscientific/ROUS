@@ -66,10 +66,13 @@ of phase noise as a signal's frequency and amplitude change.
 '''############################'''
 bits = 16 # ADC resolution (Theoretical!!)
 num_bins = 4096 #This is also the number of points in the time record
-bin_number = 500 #Bin number of the signal itself. If bin_number is greater
-                #than num_bins/2, then the signal will be aliased accordingly.
-                # Also, this simulation does not handle non-integer (noncoherent)
-                # bin numbers. (Application of windows is a big topic in and of itself.)
+
+#Bin number of the signal itself. If bin_number is greater
+#than num_bins/2, then the signal will be aliased accordingly.
+# Also, this simulation does not handle non-integer (noncoherent)
+# bin numbers. (Application of windows is a big topic in and of itself.)
+
+bin_number = 10.01234 
 
 thermal_noise = 0.5 #0.00010 # LSB of thermal noise
 jitter = 0.0000000000001 #0.000025 # clock jitter, expressed as RMS fraction of a sampling interval
@@ -78,6 +81,7 @@ jitter = 0.0000000000001 #0.000025 # clock jitter, expressed as RMS fraction of 
 # a single tone of phase noise, rather than a distribution (as is the case in
 # "real life".) This IS an accurate representation of a sinusoidal disturbance
 # on the clock.
+
 phase_noise_offset = 25 # Offset from carrier in bins
 phase_noise_amplitude = 0.0 #.000001 #Amplitude, in fraction of a sample period
 '''##############################'''
@@ -110,16 +114,16 @@ freq_domain_magnitude = np.abs(freq_domain)
 #Now notch the signal out of the spectrum. We have the advantage here
 #that there's only a single bin of signal, and no distortion.
 np.copyto(freq_domain_noise, freq_domain_magnitude) #Make a copy
-freq_domain_noise[bin_number] = 0 #Zero out positive signal bin
-freq_domain_noise[num_bins - bin_number] = 0 # And the negative bin
+freq_domain_noise[int(bin_number)] = 0 #Zero out positive signal bin
+freq_domain_noise[num_bins - int(bin_number)] = 0 # And the negative bin
 # Note that we're also zeroing out one bin worth of noise. We're going to assume this is insignificant
 # in this simulation, but if you're zeroing out lots of bins with a mask, you might want to fill them in
 # with the average noise floor from the bins that aren't zeroed (or some more intelligent estimate.)
 
 
 #Make another array that just has the signal
-freq_domain_signal[bin_number] = freq_domain_magnitude[bin_number]
-freq_domain_signal[num_bins - bin_number] = freq_domain_magnitude[num_bins - bin_number]
+freq_domain_signal[int(bin_number)] = freq_domain_magnitude[int(bin_number)]
+freq_domain_signal[num_bins - int(bin_number)] = freq_domain_magnitude[num_bins - int(bin_number)]
 
 signal = 0.0 #Start with zero signal, zero noise
 noise = 0.0

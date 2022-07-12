@@ -44,7 +44,7 @@ N_SAMPLES = 1024
 adc = ad7768(uri="ip:10.116.177.40")
 adc.sample_rate = 256000
 adc.power_mode = "FAST_MODE"
-adc.filter = "SINC5"
+adc.filter_type = "SINC5"
 
 m2k = libm2k.m2kOpen("ip:192.168.2.1")
 m2k.calibrateDAC()

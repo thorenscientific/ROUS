@@ -46,16 +46,19 @@ adc.sample_rate = 8000
 adc.rx_buffer_size = 1024
 adc.power_mode = "FAST_MODE"
 adc.filter = "WIDEBAND"
+adc.rx_output_type = "raw"
+
 
 plt.clf()
-plt.ylim((-5,5))
+# plt.ylim((-5,5))
 data = adc.rx()
 for ch in adc.rx_enabled_channels:
-        plt.plot(range(0, adc.rx_buffer_size), data[ch],
-                 label = "voltage" + str(ch))
+        plt.plot(range(0, len(data[0])), data[ch],
+                  label = "voltage" + str(ch), marker='.')
+
 plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
            ncol=2, mode="expand", borderaxespad=0.)
 plt.pause(0.01)
 
-del adc
+# del adc
 

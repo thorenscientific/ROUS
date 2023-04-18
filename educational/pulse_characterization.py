@@ -60,7 +60,7 @@ from matplotlib import pyplot as plt
 
 # unknown pulse parameters
 alt = 1.0
-mean = 450.0
+mean = 350.0
 sigma = 5
 noise = 0.2
 
@@ -95,7 +95,7 @@ position_vector = np.convolve(unknown_pulse, testpulse[::-1])
 print("Maximum correlation at " + str(np.argmax(position_vector) - 50))
 
 plt.figure(1)
-plt.title("Basic gaussian detection\n by convolution")
+plt.title("Basic detection\n by convolution")
 plt.plot(position_vector)
 plt.plot(unknown_pulse)
 plt.plot(testpulse)
@@ -113,6 +113,8 @@ wavelet = signal.ricker
 widths = np.arange(1, 20)
 cwtmatr = signal.cwt(sig, wavelet, widths)
 plt.figure(2)
+
+plt.title("Pulse detection\n by Continuous Wavelet Transform")
 
 #From scipy.signal.cwt example
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.cwt.html

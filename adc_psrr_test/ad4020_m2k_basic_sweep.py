@@ -51,9 +51,8 @@ vref = 5.0  # Manually entered, consult eval board manual
 my_uri = sys.argv[1] if len(sys.argv) >= 2 else "ip:analog.local"
 print("uri: " + str(my_uri))
 
-my_adc = adi.ad4020(uri=my_uri)
+my_adc = adi.ad4020(uri="ip:analog.local")
 my_adc.rx_buffer_size = 16384
-
 
 # Set up m2k
 
@@ -88,12 +87,7 @@ for f in range(3000, 300000, 1000): # Sweep 3kHz to 300kHz in 1kHz steps
     
     data = my_adc.rx()
     data = my_adc.rx()
-    
-    # Figure out how to do this correctly - need to sign extend bit 19
-    for i in range(len(data)):
-        if data[i] > 2 ** 19:
-            data[i] -= 2 ** 20
-    
+        
     x = np.arange(0, len(data))
     voltage = data * 2.0 * vref / (2 ** 20)
     dc = np.average(voltage)  # Extract DC component

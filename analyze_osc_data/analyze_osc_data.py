@@ -105,7 +105,17 @@ print("analyzing file: ", filename)
 dataframe = pd.read_csv(filename_with_path, header=None)
 data = dataframe[0].tolist()
 
-save_for_pscope(filename_with_path.with_suffix('.adc'), 18, True, len(data), "DC0000", "LTC1111", data, data, )
+# Quick hack for Pscope, not robust (bipolar device with a small positive offset
+#  and very low signal level could detect as unipolar) 
+if min(data) < 0:
+    is_bipolar = True
+    print("Data is bipolar...")
+else:
+    is_bipolar = False
+    print("Data seems to be unipolar...")
+
+print("Saving out .adc file for Pscope...")    
+save_for_pscope(filename_with_path.with_suffix('.adc'), qres, is_bipolar, len(data), "DC0000", "LTC1111", data, data, )
 
 nfft = len(data)
 navg = 1

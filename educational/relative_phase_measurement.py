@@ -99,8 +99,8 @@ for t in range(num_bins):
     sig2[t] += np.random.normal(0.0, thermal_noise) #Then the thermal noise ;(
     sig2[t] = np.rint(sig2[t]) #Finally, round to integer value - equiavalent to quantizing
 
-#window = np.blackman(num_bins)
-window = np.ones(num_bins)
+window = np.blackman(num_bins)
+# window = np.ones(num_bins)
 window = window / np.sum(window) # Normalize
 
 freq_domain_sig1 = np.fft.fft(sig1 * window)/num_bins

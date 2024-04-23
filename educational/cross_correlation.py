@@ -57,7 +57,6 @@ http://www.holzworth.com/Aux_docs/Holz_MWJ_TechFeat_Feb2011.pdf
 
 import numpy as np
 from numpy import array, vdot, zeros
-from scipy import fft, real
 #from numpy.random import normal, uniform
 
 # For some reason, numpy dot product functions don't do what we expect. This could
@@ -80,12 +79,12 @@ d = 2+2j
 #(70-8j)
 #print vdot(b, a)
 #(70+8j)
-print (np.dot(c, d))
-print (np.vdot(c, d))
-print (dot_product(c, d))
-print (alt_dot_product(c, d))
-
-
+print("c: ", c)
+print("d: ", d)
+print ("Testing np.dot:", np.dot(c, d))
+print ("Testing np.vdot:", np.vdot(c, d))
+print ("Testing our dot_product:", dot_product(c, d))
+print ("Testing our alt_dot_product:", alt_dot_product(c, d))
 
 zero_vector = np.ndarray(shape=(1024), dtype=complex) # Make a complex vector
 xcorr = zero_vector
@@ -124,9 +123,9 @@ for j in range(0, naverages):
     path_a_noise = np.random.normal(0.0, tester_noise, num_points) # Noise of one of the tester's signal paths
     path_b_noise = np.random.normal(0.0, tester_noise, num_points) # Noise of the tester's other signal path
 
-    dut_noise_fft = fft(dut_noise) # FFT of DUT noise, for comparison to cross-correlation result
-    path_a_noise_fft = fft(path_a_noise + dut_noise) # FFT of the two tester path outputs. DUT noise
-    path_b_noise_fft = fft(path_b_noise + dut_noise) # is common between the two.
+    dut_noise_fft = np.fft.fft(dut_noise) # FFT of DUT noise, for comparison to cross-correlation result
+    path_a_noise_fft = np.fft.fft(path_a_noise + dut_noise) # FFT of the two tester path outputs. DUT noise
+    path_b_noise_fft = np.fft.fft(path_b_noise + dut_noise) # is common between the two.
 
 
     for i in range(0, num_points): # Dot product of each individual bin

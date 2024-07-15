@@ -24,7 +24,7 @@ import argparse
 import matplotlib
 
 import numpy as np
-import genalyzer_advanced as gn
+import genalyzer.advanced as gn
 import matplotlib.pyplot as pl
 import pandas as pd
 

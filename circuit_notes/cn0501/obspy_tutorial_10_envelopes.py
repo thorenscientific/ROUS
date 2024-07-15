@@ -14,7 +14,7 @@ data = st[0].data
 npts = st[0].stats.npts
 samprate = st[0].stats.sampling_rate
 
-shortdata = data[int(80*samprate):int(90*samprate)]
+shortdata = data[int(80*samprate):int(120*samprate)]
 
 m2kdata = resample(shortdata, int(len(shortdata)*7500//samprate))
 
@@ -23,12 +23,12 @@ st_filt = st.copy()
 st_filt.filter('bandpass', freqmin=1, freqmax=3, corners=2, zerophase=True)
 
 # Envelope of filtered data
-data_envelope = obspy.signal.filter.envelope(st_filt[0].data)
+data_envelope = obspy.signal.filter.envelope(shortdata)
 
 # The plotting, plain matplotlib
 plt.figure(1)
-t = np.arange(0, npts / samprate, 1 / samprate)
-plt.plot(t, st_filt[0].data, 'k')
+t = np.arange(0, len(shortdata) / samprate, 1 / samprate)
+plt.plot(t, shortdata, 'k')
 plt.plot(t, data_envelope, 'k:')
 plt.title(st[0].stats.starttime)
 plt.ylabel('Filtered Data w/ Envelope')

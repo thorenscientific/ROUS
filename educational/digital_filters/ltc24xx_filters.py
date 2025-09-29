@@ -53,7 +53,7 @@ http://www.continuum.io/
 
 from numpy import min, max, convolve, random, average, ones, zeros, amax, log
 import numpy as np
-from scipy import linspace, fft
+from scipy import  fft
 from scipy import signal
 from scipy.signal import lti, step
 from matplotlib import pyplot as plt

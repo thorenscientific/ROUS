@@ -60,8 +60,9 @@ import time
 
 # Import Linear Lab Tools utility funcitons
 import sys
-from llt.utils.DC2390_functions import * # Has filter DF, type information
-import llt.utils.linear_lab_tools_functions as lltf
+from DC2390_functions import * # Has filter DF, type information
+import linear_lab_tools_functions as lltf
+
 
 start_time = time.time();
 
@@ -87,18 +88,20 @@ try:
 except: # if not, read files
     read_files = True
 
+# read_files = False
+
 if read_files == True:
-    filters          = [[[] for j in xrange(len(DF_list))] for i in xrange(len(FT_list))]
-    filt_resp_mag    = [[[] for j in xrange(len(DF_list))] for i in xrange(len(FT_list))]
-    filt_resp_mag_db = [[[] for j in xrange(len(DF_list))] for i in xrange(len(FT_list))]
+    filters          = [[[] for j in range(len(DF_list))] for i in range(len(FT_list))]
+    filt_resp_mag    = [[[] for j in range(len(DF_list))] for i in range(len(FT_list))]
+    filt_resp_mag_db = [[[] for j in range(len(DF_list))] for i in range(len(FT_list))]
     ftnum = 0 # Handy numerical index
     for ft in FT_list:
         dfnum = 0 # Handy numerical index
         for df in DF_list:
-            filename = "../../../common/ltc25xx_filters/" + ft.FT_txt + "_" + df.DF_txt + ".txt" # Construct filename
+            filename = "./ltc25xx_filters/" + ft.FT_txt + "_" + df.DF_txt + ".txt" # Construct filename
             filelength = lltf.linecount(filename) # Find out how long it is
             filters[ftnum][dfnum] = np.ndarray(filelength, dtype=float) # Add entry to list
-            print ("reading " + str(filelength) + " coefficients from file " + filename)
+            print(("reading " + str(filelength) + " coefficients from file " + filename))
             with open(filename, 'r') as infile: # Read in coefficients from files
                 for i in range(0, filelength):
                     instring = infile.readline()
@@ -108,9 +111,9 @@ if read_files == True:
             filt_resp_mag_db[ftnum][dfnum] = 20*np.log10(abs(filt_resp_mag[ftnum][dfnum])) # Calculate response in dB
             dfnum += 1
         ftnum += 1
-    print ("Done reading in all coefficient files and calculating responses!!")
+    print(("Done reading in all coefficient files and calculating responses!!"))
 
-read_files = False # So that we don't re-read files if run again.
+# read_files = False # So that we don't re-read files if run again.
 
 # Create filter response of Variable-SINC filter, N=2, to represent the simplest possible filter.
 # (This mode is distinct from the other filters, it doesn't have a coefficient file.)
@@ -163,7 +166,7 @@ fignum += 1
 
 # Selection of filters for section of video discussing versatility, compared
 # with delta sigma
-all_filter_plot = False
+all_filter_plot = True
 if all_filter_plot == True:
     plt.figure(fignum)
     plt.title("A wide selection of LTC2500-32 filter responses")
@@ -194,7 +197,7 @@ if filter_bw_plot == True:
     plt.semilogx(haxis, filt_resp_mag_db[ftnum][5], linewidth=lw, color="blue", zorder=1)
     fignum += 1
 
-print "My program took", (time.time() - start_time), " seconds to run"
+print("My program took", (time.time() - start_time), " seconds to run")
 
 
 '''
@@ -226,68 +229,68 @@ start_time = time.time();
 filename = "../../../common/ltc25xx_filters/" + FTSINC1.FT_txt + "_" + DF_info.DF_txt + ".txt"
 filelength = lltf.linecount(filename)
 filt_sinc1 = np.ndarray(filelength, dtype=float)
-print ("reading " + str(filelength) + " coefficients from file " + filename)
+print(("reading " + str(filelength) + " coefficients from file " + filename))
 # Read in coefficients from files
 with open(filename, 'r') as infile:
     for i in range(0, filelength):
         instring = infile.readline()
         filt_sinc1[i] = float(instring)
-print("done reading filter coefficients for " + FTSINC1.FT_txt + "!")
+print("done reading filter coefficients for " + FTSINC1.FT_txt + "!"))
 
 filename = "../../../common/ltc25xx_filters/" + FTSINC2.FT_txt + "_" + DF_info.DF_txt + ".txt"
 filelength = lltf.linecount(filename)
 filt_sinc2 = np.ndarray(filelength, dtype=float)
-print ("reading " + str(filelength) + " coefficients from file " + filename)
+print(("reading " + str(filelength) + " coefficients from file " + filename))
 # Read in coefficients from files
 with open(filename, 'r') as infile:
     for i in range(0, filelength):
         instring = infile.readline()
         filt_sinc2[i] = float(instring)
-print("done reading filter coefficients for " + FTSINC2.FT_txt + "!")
+print("done reading filter coefficients for " + FTSINC2.FT_txt + "!"))
 
 filename = "../../../common/ltc25xx_filters/" + FTSINC3.FT_txt + "_" + DF_info.DF_txt + ".txt"
 filelength = lltf.linecount(filename)
 filt_sinc3 = np.ndarray(filelength, dtype=float)
-print ("reading " + str(filelength) + " coefficients from file " + filename)
+print(("reading " + str(filelength) + " coefficients from file " + filename))
 # Read in coefficients from files
 with open(filename, 'r') as infile:
     for i in range(0, filelength):
         instring = infile.readline()
         filt_sinc3[i] = float(instring)
-print("done reading filter coefficients for " + FTSINC3.FT_txt + "!")
+print("done reading filter coefficients for " + FTSINC3.FT_txt + "!"))
 
 filename = "../../../common/ltc25xx_filters/" + FTSINC4.FT_txt + "_" + DF_info.DF_txt + ".txt"
 filelength = lltf.linecount(filename)
 filt_sinc4 = np.ndarray(filelength, dtype=float)
-print ("reading " + str(filelength) + " coefficients from file " + filename)
+print(("reading " + str(filelength) + " coefficients from file " + filename))
 # Read in coefficients from files
 with open(filename, 'r') as infile:
     for i in range(0, filelength):
         instring = infile.readline()
         filt_sinc4[i] = float(instring)
-print("done reading filter coefficients for " + FTSINC4.FT_txt + "!")
+print("done reading filter coefficients for " + FTSINC4.FT_txt + "!"))
 
 filename = "../../../common/ltc25xx_filters/" + FTSSINC.FT_txt + "_" + DF_info.DF_txt + ".txt"
 filelength = lltf.linecount(filename)
 filt_ssinc = np.ndarray(filelength, dtype=float)
-print ("reading " + str(filelength) + " coefficients from file " + filename)
+print(("reading " + str(filelength) + " coefficients from file " + filename))
 # Read in coefficients from files
 with open(filename, 'r') as infile:
     for i in range(0, filelength):
         instring = infile.readline()
         filt_ssinc[i] = float(instring)
-print("done reading filter coefficients for " + FTSSINC.FT_txt + "!")
+print("done reading filter coefficients for " + FTSSINC.FT_txt + "!"))
 
 filename = "../../../common/ltc25xx_filters/" + FT_FLAT.FT_txt + "_" + DF_info.DF_txt + ".txt"
 filelength = lltf.linecount(filename)
 filt_flat = np.ndarray(filelength, dtype=float)
-print ("reading " + str(filelength) + " coefficients from file " + filename)
+print(("reading " + str(filelength) + " coefficients from file " + filename))
 # Read in coefficients from files
 with open(filename, 'r') as infile:
     for i in range(0, filelength):
         instring = infile.readline()
         filt_flat[i] = float(instring)
-print("done reading filter coefficients for " + FT_FLAT.FT_txt + "!")
+print("done reading filter coefficients for " + FT_FLAT.FT_txt + "!"))
 
 
 
@@ -298,7 +301,7 @@ filt_sinc3 /= sum(filt_sinc3) #Normalize to unity gain
 filt_sinc4 /= sum(filt_sinc4) #Normalize to unity gain
 filt_ssinc /= sum(filt_ssinc) #Normalize to unity gain
 filt_flat /= sum(filt_flat) #Normalize to unity gain
-print("Done normalizing!")
+print("Done normalizing!"))
 
 # Plot the impulse responses on the same horizontal axis, with normalized
 # amplitude for a better visual picture...
@@ -354,6 +357,6 @@ plt.plot(haxis, filt_ssinc_resp_mag_db, linewidth=lw, color="purple",  zorder=1)
 plt.plot(haxis, filt_flat_resp_mag_db, linewidth=lw, color="black", zorder=1)
 
 
-print "My program took", (time.time() - start_time), " seconds to run"
+print("My program took", (time.time() - start_time), " seconds to run")
 
 '''

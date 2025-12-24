@@ -166,7 +166,7 @@ fignum += 1
 
 # Selection of filters for section of video discussing versatility, compared
 # with delta sigma
-all_filter_plot = True
+all_filter_plot = False
 if all_filter_plot == True:
     plt.figure(fignum)
     plt.title("A wide selection of LTC2500-32 filter responses")

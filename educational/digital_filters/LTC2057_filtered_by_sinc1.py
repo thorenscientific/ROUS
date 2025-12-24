@@ -67,7 +67,7 @@ from scipy import signal
 from matplotlib import pyplot as plt
 # Import Linear Tech functions
 # import LTPyLab_functions as lltf
-import llt.utils.linear_lab_tools_functions as lltf
+import linear_lab_tools_functions as lltf
 
 # Set up parameters
 samplerate = 1024000 # Samples per second
@@ -126,7 +126,7 @@ plt.show()
 
 wide_ltc2057_psd = np.zeros(fftlength*2) # bin zero(DC) already set to zero ;)
 print('reading wide (2MHz) noise PSD data from file')
-infile = open('../../../common/ltspice/LTC2057_noisesim_2Meg.txt', 'r')
+infile = open('LTC2057_noisesim_2Meg.txt', 'r')
 print("First line (header): " + infile.readline())
 for i in range(1, fftlength*2):
     instring = infile.readline()
@@ -142,12 +142,12 @@ points_per_zone = 4096
 zones_ltc2057_psd, ltc2057_folded = lltf.fold_spectrum(wide_ltc2057_psd, points_per_zone, num_zones )
 
 print("Size of zones_ltc2057_psd 2d array:")
-print len(zones_ltc2057_psd)
+print (len(zones_ltc2057_psd))
 
 plt.figure(4)
 plt.title("2.048MHz worth of LTC2057 noise,\nFolded into 4 Nyquist zones")
 ax = plt.gca()
-ax.set_axis_bgcolor('#C0C0C0')
+# ax.set_axis_bgcolor('#C0C0C0')
 lines = plt.plot(zones_ltc2057_psd[0])
 plt.setp(lines, color='#FF0000', ls='-') #Red
 lines = plt.plot(zones_ltc2057_psd[1])
@@ -168,7 +168,7 @@ total_resp2 = list(zones_ltc2057_psd[2])
 total_resp3 = list(zones_ltc2057_psd[3])
 
 # Multipy analog filter response with the digital filter response, zone by zone
-for i in range(0, (fftlength/2)-1):
+for i in range(0, (fftlength//2)-1):
     total_resp0[i] = total_resp0[i] * sinc1resp[i]
     total_resp1[i] = total_resp1[i] * sinc1resp[i]
     total_resp2[i] = total_resp2[i] * sinc1resp[i]
@@ -178,7 +178,7 @@ for i in range(0, (fftlength/2)-1):
 plt.figure(5)
 plt.title("LTC2057 noise to 2.048MHz, folded \nand multiplied by SINC1")
 ax = plt.gca()
-ax.set_axis_bgcolor('#C0C0C0')
+# ax.set_axis_bgcolor('#C0C0C0')
 lines = plt.plot(zones_ltc2057_psd[0])
 plt.setp(lines, color='#FF0000', ls='-') #Red
 lines = plt.plot(zones_ltc2057_psd[1])
@@ -205,10 +205,10 @@ plt.show()
 
 
 ltc2057_total_noise = np.zeros(fftlength*2)
-ltc2057_filtered_total_noise = np.zeros(fftlength/2)
+ltc2057_filtered_total_noise = np.zeros(fftlength//2)
 for i in range(1, fftlength*2):
     ltc2057_total_noise[i] = ltc2057_total_noise[i-1] + wide_ltc2057_psd[i]
-for i in range(1, fftlength/2-1):
+for i in range(1, fftlength//2-1):
     ltc2057_filtered_total_noise[i] = ltc2057_filtered_total_noise[i-1] + total_resp0[i] + total_resp1[i] + total_resp2[i] + total_resp3[i]
     
 ltc2057_total_noise = ltc2057_total_noise / ((bin_width / 2) ** 0.5)

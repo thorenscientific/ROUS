@@ -22,6 +22,7 @@ and anlyze with:
 
 import argparse
 import matplotlib
+matplotlib.use('qt5agg')  # or 'tkagg', 'wxagg', etc.
 
 import numpy as np
 import genalyzer as gn

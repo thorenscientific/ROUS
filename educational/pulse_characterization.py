@@ -103,13 +103,21 @@ plt.show()
 
 # Example wavelet transform, based on example given in cwt documentation
 
+import pywt
+w = pywt.ContinuousWavelet('mexh')  # "Mexican Hat", as mention by Reuben above
+a,t = w.wavefun()
+
+# wavelet = signal.ricker
+wavelet = a
+
 from scipy import signal
-sig = (np.random.rand(100) - 0.5) * .01
-sig += signal.ricker(100, 4)
+sig = (np.random.rand(256) - 0.5) * .01
+sig += wavelet
 
 sig = unknown_pulse
 
-wavelet = signal.ricker
+
+
 widths = np.arange(1, 20)
 cwtmatr = signal.cwt(sig, wavelet, widths)
 plt.figure(2)
